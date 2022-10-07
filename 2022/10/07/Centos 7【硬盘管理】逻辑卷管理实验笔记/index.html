@@ -1,0 +1,249 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Centos 7【磁盘管理】逻辑卷管理实验笔记 | 医疗兵的博客</title><meta name="keywords" content="Centos7,分区,硬盘"><meta name="author" content="医疗兵"><meta name="copyright" content="医疗兵"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前置环境：VM虚拟机内安装的Centos7系统 物理卷管理在虚拟机里添加硬盘  选择虚拟机-设置，添加硬盘，添加两块20G的硬盘 回到centos里打开终端，输入lsblk lsblk  #显示所有可用块设备的信息及其依赖关系  没有发现新添加的硬盘，因为新硬盘还没有加载，需要将连接新硬盘的SCSI总线重新扫描才可以被系统识别。 使用ls显示主机总线号 ls &#x2F;sys&#x2F;class&#x2F;scsi_hos">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Centos 7【磁盘管理】逻辑卷管理实验笔记">
+<meta property="og:url" content="https://12404.top/2022/10/07/Centos%207%E3%80%90%E7%A1%AC%E7%9B%98%E7%AE%A1%E7%90%86%E3%80%91%E9%80%BB%E8%BE%91%E5%8D%B7%E7%AE%A1%E7%90%86%E5%AE%9E%E9%AA%8C%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="医疗兵的博客">
+<meta property="og:description" content="前置环境：VM虚拟机内安装的Centos7系统 物理卷管理在虚拟机里添加硬盘  选择虚拟机-设置，添加硬盘，添加两块20G的硬盘 回到centos里打开终端，输入lsblk lsblk  #显示所有可用块设备的信息及其依赖关系  没有发现新添加的硬盘，因为新硬盘还没有加载，需要将连接新硬盘的SCSI总线重新扫描才可以被系统识别。 使用ls显示主机总线号 ls &#x2F;sys&#x2F;class&#x2F;scsi_hos">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s3.bmp.ovh/imgs/2022/10/05/d44399573d1fb873.png">
+<meta property="article:published_time" content="2022-10-07T11:32:34.329Z">
+<meta property="article:modified_time" content="2022-10-07T18:01:00.015Z">
+<meta property="article:author" content="医疗兵">
+<meta property="article:tag" content="Centos7">
+<meta property="article:tag" content="分区">
+<meta property="article:tag" content="硬盘">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s3.bmp.ovh/imgs/2022/10/05/d44399573d1fb873.png"><link rel="shortcut icon" href="https://s2.loli.net/2022/09/19/UWzRTS7beuDvFYd.jpg"><link rel="canonical" href="https://12404.top/2022/10/07/Centos%207%E3%80%90%E7%A1%AC%E7%9B%98%E7%AE%A1%E7%90%86%E3%80%91%E9%80%BB%E8%BE%91%E5%8D%B7%E7%AE%A1%E7%90%86%E5%AE%9E%E9%AA%8C%E7%AC%94%E8%AE%B0/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Centos 7【磁盘管理】逻辑卷管理实验笔记',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-10-08 02:01:00'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.2"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://s3.bmp.ovh/imgs/2022/09/20/1ecb950bcff7fba0.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">15</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://s3.bmp.ovh/imgs/2022/10/05/d44399573d1fb873.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">医疗兵的博客</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Centos 7【磁盘管理】逻辑卷管理实验笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-10-07T11:32:34.329Z" title="发表于 2022-10-07 19:32:34">2022-10-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-10-07T18:01:00.015Z" title="更新于 2022-10-08 02:01:00">2022-10-08</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Centos7/">Centos7</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Centos 7【磁盘管理】逻辑卷管理实验笔记"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>前置环境：VM虚拟机内安装的Centos7系统</p>
+<h1 id="物理卷管理"><a href="#物理卷管理" class="headerlink" title="物理卷管理"></a>物理卷管理</h1><h2 id="在虚拟机里添加硬盘"><a href="#在虚拟机里添加硬盘" class="headerlink" title="在虚拟机里添加硬盘"></a>在虚拟机里添加硬盘</h2><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210071941392.png" alt="image-20221007194108323" style="zoom:67%;">
+
+<p>选择虚拟机-设置，添加硬盘，添加两块20G的硬盘</p>
+<p>回到centos里打开终端，输入<code>lsblk</code></p>
+<pre><code>lsblk  #显示所有可用块设备的信息及其依赖关系
+</code></pre>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210071952746.png"><br>没有发现新添加的硬盘，因为新硬盘还没有加载，需要将连接新硬盘的SCSI总线重新扫描才可以被系统识别。</p>
+<p>使用<code>ls</code>显示主机总线号</p>
+<pre><code>ls /sys/class/scsi_host/
+</code></pre>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210072005410.png" alt="image-20221007200524367"></p>
+<p>使用echo命令依次扫描这三个设备</p>
+<pre><code>echo &quot;- - -&quot;&gt; /sys/class/scsi_host/host0/scan
+echo &quot;- - -&quot;&gt; /sys/class/scsi_host/host1/scan
+echo &quot;- - -&quot;&gt; /sys/class/scsi_host/host2/scan
+</code></pre>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210072124164.png" alt="image-20221007212449127"></p>
+<p>再次使用<code>lsblk</code>显示所有可用块信息，发现了新加的两块20G的磁盘，硬盘已经被识别了</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210072125784.png" alt="image-20221007212514751"></p>
+<h2 id="fdisk命令分区"><a href="#fdisk命令分区" class="headerlink" title="fdisk命令分区"></a>fdisk命令分区</h2><pre><code>fdisk /dev/sdb
+</code></pre>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210072150363.png" alt="image-20221007215051318"></p>
+<p>然后按下<code>m</code>,查看帮助</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210072152345.png" alt="image-20221007215247307"></p>
+<h3 id="第一个分区"><a href="#第一个分区" class="headerlink" title="第一个分区"></a>第一个分区</h3><p>输入<code>n</code>，添加一个新的分区</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210072157565.png" alt="image-20221007215758521"></p>
+<p>输入<code>p</code>，主要分区，默认也是主要分区</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210072201583.png" alt="image-20221007220115557"></p>
+<p>输入分区号<code>1</code>，默认也是1</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210072204116.png" alt="image-20221007220402083"></p>
+<p>输入起始扇区<code>2048</code>,默认也是2048</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210072206542.png" alt="image-20221007220634506"></p>
+<p>输入<code>+5G</code>，设置分区大小</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210072210519.png" alt="image-20221007221041484"></p>
+<h3 id="第二个分区"><a href="#第二个分区" class="headerlink" title="第二个分区"></a>第二个分区</h3><p>再次输入<code>n</code>，新建一个分区</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210072213956.png" alt="image-20221007221351921"></p>
+<p>输入<code>e</code>，选择扩展卷，输入分区号<code>2</code>，输入起始扇区，和前面的大同小异</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210072221356.png" alt="image-20221007222146317"></p>
+<h3 id="第三个分区"><a href="#第三个分区" class="headerlink" title="第三个分区"></a>第三个分区</h3><p>输入<code>n</code>，新建一个分区</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210072227609.png" alt="image-20221007222739568"></p>
+<p>输入<code>l</code>，新建逻辑区，再直接回车，再输入+5G</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210072229754.png" alt="image-20221007222942714"></p>
+<h3 id="第四个分区"><a href="#第四个分区" class="headerlink" title="第四个分区"></a>第四个分区</h3><p>输入<code>n</code>，输入<code>l</code>，再直接回车，再输入+5G</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210072235368.png" alt="image-20221007223503328"></p>
+<h3 id="第五个分区"><a href="#第五个分区" class="headerlink" title="第五个分区"></a>第五个分区</h3><p>输入<code>n</code>，输入<code>l</code>，再回车两次</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210072236956.png" alt="image-20221007223635922"></p>
+<h3 id="查看分区表"><a href="#查看分区表" class="headerlink" title="查看分区表"></a>查看分区表</h3><p>输入<code>p</code>，打印分区表</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210072238316.png" alt="image-20221007223839270"></p>
+<h3 id="将分区格式改为LVM"><a href="#将分区格式改为LVM" class="headerlink" title="将分区格式改为LVM"></a>将分区格式改为LVM</h3><p>输入<code>t</code>,更改分区格式，再输入分区号【5，6，7】，再输入hex代码<code>8e</code>，【输入L可以列出所有代码】</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210072242689.png" alt="image-20221007224258651"></p>
+<h3 id="更改分区表"><a href="#更改分区表" class="headerlink" title="更改分区表"></a>更改分区表</h3><p>输入<code>w</code>，确认修改分区表</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210072245455.png" alt="image-20221007224525421"></p>
+<h3 id="重新读取分区表"><a href="#重新读取分区表" class="headerlink" title="重新读取分区表"></a>重新读取分区表</h3><p>输入<code>partprobe</code>，重新读取分区表</p>
+<h2 id="2-建立物理卷"><a href="#2-建立物理卷" class="headerlink" title="2.建立物理卷"></a>2.建立物理卷</h2><p>在建立物理卷的时候，我们既可以把整块的硬盘建立成物理卷，也可以把某个分区建立成物理卷</p>
+<p>输入<code>pvcreate</code>，后面接/dev/sdb5  【6还有7】 </p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210072259465.png" alt="image-20221007225926418"></p>
+<h2 id="3-查看物理卷"><a href="#3-查看物理卷" class="headerlink" title="3.查看物理卷"></a>3.查看物理卷</h2><p>1.输入<code>pvscan</code>显示简单的信息</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210080025695.png" alt="image-20221008002518653"></p>
+<p>2.输入<code>pvdisplay</code>查看比较详细的信息</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210080026410.png" alt="image-20221008002656364"></p>
+<h2 id="4-删除物理卷"><a href="#4-删除物理卷" class="headerlink" title="4.删除物理卷"></a>4.删除物理卷</h2><p>删除物理卷的时候，物理卷必须不属于任何卷组，也就是需要将物理卷从卷组里删除，再删除物理卷<br>    pvremove /dev/sdb7  #删除物理卷<br>    pvscan   #查看物理卷</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210080114863.png" alt="image-20221008011424818"></p>
+<p>删除物理卷之后再次查看发现物理卷已经没有了</p>
+<h1 id="卷组管理"><a href="#卷组管理" class="headerlink" title="卷组管理"></a>卷组管理</h1><p>我们有三个物理卷/dev/sdb5~7，先把/dev/sdb5和6添加到卷组中，留下/dev/sdb7调整卷组大小用</p>
+<h2 id="1-创建卷组"><a href="#1-创建卷组" class="headerlink" title="1.创建卷组"></a>1.创建卷组</h2><p>创建卷组的名称为scvg，PE大小是8M<br>    vgcreate -s 8MB scvg /dev/sdb5 /dev/sdb6<br>    pvscan #查看物理卷</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210080126372.png" alt="image-20221008012641328"></p>
+<h2 id="2-增加卷组容量"><a href="#2-增加卷组容量" class="headerlink" title="2. 增加卷组容量"></a>2. 增加卷组容量</h2><p>把/dev/sdb7添加到卷组里</p>
+<p>输入<code>vgs</code>,然后输入<code>vgextend scvg /dev/sdb7</code>，然后输入<code>vgs</code>查看</p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210080130077.png" alt="image-20221008013025036"></p>
+<h2 id="3-减少卷组容量"><a href="#3-减少卷组容量" class="headerlink" title="3.减少卷组容量"></a>3.减少卷组容量</h2><pre><code>vgreduce scvg /dev/sdb7  
+【再通过pvscan或者vgs查看】
+</code></pre>
+<h1 id="逻辑卷管理"><a href="#逻辑卷管理" class="headerlink" title="逻辑卷管理"></a>逻辑卷管理</h1><h2 id="1-创建逻辑卷"><a href="#1-创建逻辑卷" class="headerlink" title="1.创建逻辑卷"></a>1.创建逻辑卷</h2><p>逻辑卷是创建在卷组之上，逻辑卷对应的设备文件保存在卷组目录下<br>【例如:在卷组”vg_1” 上创建一个逻辑卷Iv_1”， 则此逻辑卷对应的设备文件为”/dev/vg_1/IV_1”】</p>
+<pre><code>lvcreate -n lv01 -L 3G scvg    #在名为‘scvg’卷组上创建大小为3G的名为“lv01”的逻辑卷
+</code></pre>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210080140176.png" alt="image-20221008014028134"></p>
+<h2 id="2-格式化挂载逻辑卷"><a href="#2-格式化挂载逻辑卷" class="headerlink" title="2.格式化挂载逻辑卷"></a>2.格式化挂载逻辑卷</h2><p>挂载即把一个分区或磁盘放在-一个目录里。Linux用目录名挂载分区或目录的好处是</p>
+<p>一。便于操作，你可以把分区或磁盘挂载到任何你想要的目录或文件夹里</p>
+<p>二。顾名思义，由于挂载的文件夹或目录可以自己指定，所以就可以挂载到自己创建的或相关内容的目录或文件夹里。</p>
+<p>三。挂载数量没有限制，windows的分区挂载到Z:就不能继续挂载了，或者说Windows挂载的分区数不能超过26个;而Linux则没有这个限制，特别是网络磁盘映射，你可以挂载任意多的共享文件夹到你的本地文件夹里<br>    mkfs -t xfs /dev/scvg/lv01    #将逻辑卷lv01格式化成xfs格式<br>    mkdir -p /home/mylv    #创建一个/home/mylv<br>    mount /dev/scvg/lv01 /home/mylv    #将lv01文件手动挂载到mylv目录下<br>    df -h    #查看挂载信息<br>    <img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210080149878.png" alt="image-20221008014933816"></p>
+<h2 id="3-扩展逻辑卷"><a href="#3-扩展逻辑卷" class="headerlink" title="3.扩展逻辑卷"></a>3.扩展逻辑卷</h2><pre><code>fdisk -l    #查看当前磁盘的磁盘分区信息
+先查看lv01逻辑卷的大小，和扩展之后做对比
+lvextend -L +5G /dev/scvg/lv01
+fdisk -l
+</code></pre>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210080154037.png" alt="image-20221008015448971"></p>
+<p><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202210080155857.png" alt="image-20221008015551795"></p>
+<p>我们看后面的磁盘 /dev/mapper/scvg-lv01，从3221MB扩展为了8589MB</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://12404.top">医疗兵</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://12404.top/2022/10/07/Centos%207%E3%80%90%E7%A1%AC%E7%9B%98%E7%AE%A1%E7%90%86%E3%80%91%E9%80%BB%E8%BE%91%E5%8D%B7%E7%AE%A1%E7%90%86%E5%AE%9E%E9%AA%8C%E7%AC%94%E8%AE%B0/">https://12404.top/2022/10/07/Centos%207%E3%80%90%E7%A1%AC%E7%9B%98%E7%AE%A1%E7%90%86%E3%80%91%E9%80%BB%E8%BE%91%E5%8D%B7%E7%AE%A1%E7%90%86%E5%AE%9E%E9%AA%8C%E7%AC%94%E8%AE%B0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://12404.top" target="_blank">医疗兵的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Centos7/">Centos7</a><a class="post-meta__tags" href="/tags/%E5%88%86%E5%8C%BA/">分区</a><a class="post-meta__tags" href="/tags/%E7%A1%AC%E7%9B%98/">硬盘</a></div><div class="post_share"><div class="social-share" data-image="https://s3.bmp.ovh/imgs/2022/10/05/d44399573d1fb873.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2022/10/05/Centos7%E3%80%90%E5%88%86%E5%8C%BA%E3%80%91%E5%90%84%E5%88%86%E5%8C%BA%E4%BD%9C%E7%94%A8%E5%92%8C%E5%BB%BA%E8%AE%AE/"><img class="next-cover" src="https://s3.bmp.ovh/imgs/2022/10/05/d44399573d1fb873.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Centos 7【分区】各分区作用和建议</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/10/05/Centos7%E3%80%90%E5%88%86%E5%8C%BA%E3%80%91%E5%90%84%E5%88%86%E5%8C%BA%E4%BD%9C%E7%94%A8%E5%92%8C%E5%BB%BA%E8%AE%AE/" title="Centos 7【分区】各分区作用和建议"><img class="cover" src="https://s3.bmp.ovh/imgs/2022/10/05/d44399573d1fb873.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-10-05</div><div class="title">Centos 7【分区】各分区作用和建议</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://s3.bmp.ovh/imgs/2022/09/20/1ecb950bcff7fba0.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">医疗兵</div><div class="author-info__description">个人博客</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">15</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%89%A9%E7%90%86%E5%8D%B7%E7%AE%A1%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">物理卷管理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%87%8C%E6%B7%BB%E5%8A%A0%E7%A1%AC%E7%9B%98"><span class="toc-number">1.1.</span> <span class="toc-text">在虚拟机里添加硬盘</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fdisk%E5%91%BD%E4%BB%A4%E5%88%86%E5%8C%BA"><span class="toc-number">1.2.</span> <span class="toc-text">fdisk命令分区</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%88%86%E5%8C%BA"><span class="toc-number">1.2.1.</span> <span class="toc-text">第一个分区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E4%B8%AA%E5%88%86%E5%8C%BA"><span class="toc-number">1.2.2.</span> <span class="toc-text">第二个分区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E4%B8%AA%E5%88%86%E5%8C%BA"><span class="toc-number">1.2.3.</span> <span class="toc-text">第三个分区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E4%B8%AA%E5%88%86%E5%8C%BA"><span class="toc-number">1.2.4.</span> <span class="toc-text">第四个分区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E4%B8%AA%E5%88%86%E5%8C%BA"><span class="toc-number">1.2.5.</span> <span class="toc-text">第五个分区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E5%88%86%E5%8C%BA%E8%A1%A8"><span class="toc-number">1.2.6.</span> <span class="toc-text">查看分区表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E5%88%86%E5%8C%BA%E6%A0%BC%E5%BC%8F%E6%94%B9%E4%B8%BALVM"><span class="toc-number">1.2.7.</span> <span class="toc-text">将分区格式改为LVM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B4%E6%94%B9%E5%88%86%E5%8C%BA%E8%A1%A8"><span class="toc-number">1.2.8.</span> <span class="toc-text">更改分区表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8D%E6%96%B0%E8%AF%BB%E5%8F%96%E5%88%86%E5%8C%BA%E8%A1%A8"><span class="toc-number">1.2.9.</span> <span class="toc-text">重新读取分区表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%BB%BA%E7%AB%8B%E7%89%A9%E7%90%86%E5%8D%B7"><span class="toc-number">1.3.</span> <span class="toc-text">2.建立物理卷</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%9F%A5%E7%9C%8B%E7%89%A9%E7%90%86%E5%8D%B7"><span class="toc-number">1.4.</span> <span class="toc-text">3.查看物理卷</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%88%A0%E9%99%A4%E7%89%A9%E7%90%86%E5%8D%B7"><span class="toc-number">1.5.</span> <span class="toc-text">4.删除物理卷</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8D%B7%E7%BB%84%E7%AE%A1%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">卷组管理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%88%9B%E5%BB%BA%E5%8D%B7%E7%BB%84"><span class="toc-number">2.1.</span> <span class="toc-text">1.创建卷组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%A2%9E%E5%8A%A0%E5%8D%B7%E7%BB%84%E5%AE%B9%E9%87%8F"><span class="toc-number">2.2.</span> <span class="toc-text">2. 增加卷组容量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%87%8F%E5%B0%91%E5%8D%B7%E7%BB%84%E5%AE%B9%E9%87%8F"><span class="toc-number">2.3.</span> <span class="toc-text">3.减少卷组容量</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%80%BB%E8%BE%91%E5%8D%B7%E7%AE%A1%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">逻辑卷管理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%88%9B%E5%BB%BA%E9%80%BB%E8%BE%91%E5%8D%B7"><span class="toc-number">3.1.</span> <span class="toc-text">1.创建逻辑卷</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%8C%82%E8%BD%BD%E9%80%BB%E8%BE%91%E5%8D%B7"><span class="toc-number">3.2.</span> <span class="toc-text">2.格式化挂载逻辑卷</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%89%A9%E5%B1%95%E9%80%BB%E8%BE%91%E5%8D%B7"><span class="toc-number">3.3.</span> <span class="toc-text">3.扩展逻辑卷</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/10/07/Centos%207%E3%80%90%E7%A1%AC%E7%9B%98%E7%AE%A1%E7%90%86%E3%80%91%E9%80%BB%E8%BE%91%E5%8D%B7%E7%AE%A1%E7%90%86%E5%AE%9E%E9%AA%8C%E7%AC%94%E8%AE%B0/" title="Centos 7【磁盘管理】逻辑卷管理实验笔记"><img src="https://s3.bmp.ovh/imgs/2022/10/05/d44399573d1fb873.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Centos 7【磁盘管理】逻辑卷管理实验笔记"/></a><div class="content"><a class="title" href="/2022/10/07/Centos%207%E3%80%90%E7%A1%AC%E7%9B%98%E7%AE%A1%E7%90%86%E3%80%91%E9%80%BB%E8%BE%91%E5%8D%B7%E7%AE%A1%E7%90%86%E5%AE%9E%E9%AA%8C%E7%AC%94%E8%AE%B0/" title="Centos 7【磁盘管理】逻辑卷管理实验笔记">Centos 7【磁盘管理】逻辑卷管理实验笔记</a><time datetime="2022-10-07T11:32:34.329Z" title="发表于 2022-10-07 19:32:34">2022-10-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/10/05/Centos7%E3%80%90%E5%88%86%E5%8C%BA%E3%80%91%E5%90%84%E5%88%86%E5%8C%BA%E4%BD%9C%E7%94%A8%E5%92%8C%E5%BB%BA%E8%AE%AE/" title="Centos 7【分区】各分区作用和建议"><img src="https://s3.bmp.ovh/imgs/2022/10/05/d44399573d1fb873.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Centos 7【分区】各分区作用和建议"/></a><div class="content"><a class="title" href="/2022/10/05/Centos7%E3%80%90%E5%88%86%E5%8C%BA%E3%80%91%E5%90%84%E5%88%86%E5%8C%BA%E4%BD%9C%E7%94%A8%E5%92%8C%E5%BB%BA%E8%AE%AE/" title="Centos 7【分区】各分区作用和建议">Centos 7【分区】各分区作用和建议</a><time datetime="2022-10-05T11:28:16.862Z" title="发表于 2022-10-05 19:28:16">2022-10-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/09/30/Wireshark%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/" title="Wireshark的基本使用方法"><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/%E9%BB%91%E8%89%B2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Wireshark的基本使用方法"/></a><div class="content"><a class="title" href="/2022/09/30/Wireshark%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/" title="Wireshark的基本使用方法">Wireshark的基本使用方法</a><time datetime="2022-09-30T11:20:45.647Z" title="发表于 2022-09-30 19:20:45">2022-09-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/09/29/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E3%80%90%E4%BC%AA%E9%80%A0%E9%82%AE%E4%BB%B6%E3%80%91%E4%BD%BF%E7%94%A8swaks%E4%BC%AA%E9%80%A0%E8%99%9A%E5%81%87%E9%82%AE%E4%BB%B6/" title="网络安全【伪造邮件】使用swaks伪造虚假邮件"><img src="https://1240-img.oss-cn-chengdu.aliyuncs.com/img/202209301851869.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="网络安全【伪造邮件】使用swaks伪造虚假邮件"/></a><div class="content"><a class="title" href="/2022/09/29/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E3%80%90%E4%BC%AA%E9%80%A0%E9%82%AE%E4%BB%B6%E3%80%91%E4%BD%BF%E7%94%A8swaks%E4%BC%AA%E9%80%A0%E8%99%9A%E5%81%87%E9%82%AE%E4%BB%B6/" title="网络安全【伪造邮件】使用swaks伪造虚假邮件">网络安全【伪造邮件】使用swaks伪造虚假邮件</a><time datetime="2022-09-29T05:42:18.985Z" title="发表于 2022-09-29 13:42:18">2022-09-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/09/27/RedHat%E3%80%90%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E3%80%91%E7%9B%AE%E5%BD%95/" title="RedHat【基础知识】文件和目录管理"><img src="https://s3.bmp.ovh/imgs/2022/09/27/8939e8dc1aa716a4.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="RedHat【基础知识】文件和目录管理"/></a><div class="content"><a class="title" href="/2022/09/27/RedHat%E3%80%90%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E3%80%91%E7%9B%AE%E5%BD%95/" title="RedHat【基础知识】文件和目录管理">RedHat【基础知识】文件和目录管理</a><time datetime="2022-09-27T15:43:41.257Z" title="发表于 2022-09-27 23:43:41">2022-09-27</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2022 By 医疗兵</div><div class="footer_custom_text">你看到底了</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"></div><div class="aplayer no-destroy" data-id="120987721" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="true"> </div><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html><div id="sakana-widget" style="position:fixed;bottom:10px;right:10px;"></div><script>function initSakanaWidget() {
+new SakanaWidget().mount('#sakana-widget');
+}</script><script async="" onload="initSakanaWidget()" src="https://cdn.jsdelivr.net/npm/sakana-widget@2.2.1/lib/sakana.min.js"></script>
